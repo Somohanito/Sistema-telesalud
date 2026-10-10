@@ -1,35 +1,49 @@
 # Sistema Web de Gestión Hospitalaria para Telemedicina
 
-Sistema web desarrollado para la administración de expedientes clínicos, control de solicitudes de laboratorio e intercambio de información médica mediante archivos de texto plano (.TXT).
+Sistema web desarrollado para la administración de expedientes clínicos, control de solicitudes de laboratorio e intercambio de información médica mediante mensajes estandarizados HL7 v2.x (ADT^A08) en archivos .txt.
 
 ## Capturas de Pantalla e Interfaz del Sistema
 
 ### Inicio de Sesión
-![Login](public/screenshots/login.jpg)
+<p align="center">
+  <img src="public/screenshots/login.png" width="90%" alt="Login">
+</p>
 
 ### Módulo de Atención Médica
 | Consulta Médica | Orden de Laboratorio |
 | :---: | :---: |
-| ![Consulta](public/screenshots/medico-consulta.jpg) | ![Orden Lab](public/screenshots/medico-lab.jpg) |
+| <img src="public/screenshots/medico-consulta.png" width="100%" /> | <img src="public/screenshots/medico-lab.png" width="100%" /> |
+
+<div align="center">
 
 | Registro de Nuevo Paciente |
 | :---: |
-| ![Nuevo Paciente](public/screenshots/medico-paciente.jpg) |
+| <img src="public/screenshots/medico-paciente.png" width="100%" /> |
+
+</div>
 
 ### Panel de Administración Global
 | Usuarios Registrados | Gestión de Expedientes |
 | :---: | :---: |
-| ![Usuarios](public/screenshots/admin-usuarios.jpg) | ![Expedientes](public/screenshots/admin-expedientes.jpg) |
+| <img src="public/screenshots/admin-usuarios.png" width="100%" /> | <img src="public/screenshots/admin-expedientes.png" width="100%" /> |
+
+<div align="center">
 
 | Gestión de Solicitudes |
 | :---: |
-| ![Solicitudes](public/screenshots/admin-solicitudes.jpg) |
+| <img src="public/screenshots/admin-solicitudes.png" width="100%" /> |
+
+</div>
 
 ### Dashboard de Dirección General
-![Director General](public/screenshots/director.jpg)
+<p align="center">
+  <img src="public/screenshots/director.png" width="90%" alt="Director">
+</p>
 
 ### Módulo de Laboratorio Clínico
-![Laboratorio](public/screenshots/laboratorio.jpg)
+<p align="center">
+  <img src="public/screenshots/laboratorio.png" width="90%" alt="Laboratorio">
+</p>
 
 ---
 
@@ -39,7 +53,8 @@ Sistema web desarrollado para la administración de expedientes clínicos, contr
 * **Base de Datos:** SQLite3
 * **Frontend:** HTML5, CSS3 (Glassmorphism / Layout Grid), JavaScript Vanilla
 * **Autenticación:** Express Session, Bcryptjs
-* **Manejo de Archivos:** Multer (Importación/Exportación .TXT)
+* **Estándar Interoperabilidad:** HL7 v2.x (ADT^A08)
+* **Manejo de Archivos:** Multer (Importación/Exportación de mensajes HL7 en .TXT)
 
 ---
 
@@ -51,7 +66,7 @@ Sistema web desarrollado para la administración de expedientes clínicos, contr
 | :--- | :--- | :--- |
 | **Administrador** | `admin@hospital.com` | Gestión de usuarios, expedientes y solicitudes de laboratorio. |
 | **Director General** | `director@hospital.com` | Visualización de estadísticas hospitalarias y lectura de expedientes. |
-| **Médico** | `medico@hospital.com` | Alta de pacientes, historial clínico, solicitudes e importación/exportación .TXT. |
+| **Médico** | `medico@hospital.com` | Alta de pacientes, historial clínico, solicitudes e importación/exportación HL7 v2.x. |
 | **Laboratorio** | `lab@hospital.com` | Procesamiento de órdenes de análisis y captura de resultados. |
 
 ---
@@ -60,5 +75,5 @@ Sistema web desarrollado para la administración de expedientes clínicos, contr
 
 1. Clonar el repositorio:
    ```bash
-   git clone [https://github.com/TU_USUARIO/Sistema-telesalud.git](https://github.com/TU_USUARIO/Sistema-telesalud.git)
+   git clone [https://github.com/Somohanito/Sistema-telesalud.git](https://github.com/Somohanito/Sistema-telesalud.git)
    cd Sistema-telesalud
