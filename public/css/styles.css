@@ -1,0 +1,196 @@
+:root {
+    --color-darkest: #021024;
+    --color-dark: #052659;
+    --color-medium-dark: #2c5282;
+    --color-medium: #5483B3;
+    --color-light-sage: #7DA0CA;
+    --color-lightest: #C1E8FF;
+    --glass-bg: rgba(5, 38, 89, 0.55);
+    --glass-border: rgba(193, 232, 255, 0.2);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #083375, var(--color-darkest));
+    color: var(--color-lightest);
+    padding-bottom: 40px;
+}
+
+/* Barra de navegación superior */
+.navbar {
+    background: rgba(2, 16, 36, 0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--glass-border);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.navbar h2 {
+    color: var(--color-lightest);
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Contenedor principal */
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+/* Tarjetas de Cristal (Glassmorphism) */
+.card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 30px rgba(2, 16, 36, 0.5);
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card h3 {
+    color: var(--color-light-sage);
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 8px;
+}
+
+.card h4 {
+    color: var(--color-lightest);
+    margin: 15px 0 10px 0;
+    font-size: 1rem;
+}
+
+/* Campos de Formulario */
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--color-lightest);
+}
+
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    background: rgba(193, 232, 255, 0.9);
+    color: var(--color-darkest);
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.25s ease;
+}
+
+.form-group input:focus, 
+.form-group select:focus, 
+.form-group textarea:focus {
+    background: #ffffff;
+    box-shadow: 0 0 0 3px var(--color-light-sage);
+}
+
+/* Botones */
+.btn {
+    background: var(--color-medium);
+    color: var(--color-lightest);
+    border: 1px solid var(--color-light-sage);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    display: inline-block;
+}
+
+.btn:hover {
+    background: var(--color-light-sage);
+    color: var(--color-darkest);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(125, 160, 202, 0.4);
+}
+
+.btn-danger {
+    background: rgba(180, 40, 40, 0.85);
+    border-color: #ff8080;
+}
+
+.btn-danger:hover {
+    background: #dc3545;
+    color: white;
+    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.4);
+}
+
+/* Tablas */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+th, td {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+th {
+    background: rgba(2, 16, 36, 0.85);
+    color: var(--color-light-sage);
+    font-weight: 600;
+    border-bottom: 2px solid var(--glass-border);
+}
+
+td {
+    background: rgba(5, 38, 89, 0.35);
+    border-bottom: 1px solid var(--glass-border);
+    color: var(--color-lightest);
+}
+
+tr:hover td {
+    background: rgba(84, 131, 179, 0.3);
+}
+
+/* Cuadro de previsualización TXT */
+pre {
+    background: rgba(2, 16, 36, 0.8);
+    border: 1px solid var(--glass-border);
+    color: var(--color-lightest);
+    padding: 15px;
+    border-radius: 8px;
+    font-family: 'Consolas', monospace;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+}

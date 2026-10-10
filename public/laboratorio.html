@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio - Telesalud</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="navbar">
+        <h2>Módulo de Laboratorio Clínico</h2>
+        <button class="btn btn-danger" onclick="logout()">Cerrar Sesión</button>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h3>Solicitudes de Estudios Pendientes y Procesados</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Paciente</th><th>Médico Solicitante</th><th>Estudio</th><th>Estado</th><th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="solicitudesTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        async function cargarSolicitudes() {
+            const res = await fetch('/api/lab/solicitudes');
+            const data = await res.json();
+            const body = document.getElementById('solicitudesTable');
+            body.innerHTML = data.map(s => `
+                <tr>
+                    <td>${s.id}</td>
+                    <td>${s.paciente}</td>
+                    <td>${s.medico}</td>
+                    <td>${s.tipo_estudio}</td>
+                    <td>
+                        <span style="color: ${s.estado === 'PENDIENTE' ? '#ffc107' : 'var(--color-light-sage)'}; font-weight: bold;">
+                            ${s.estado}
+                        </span>
+                    </td>
+                    <td>
+                        ${s.estado === 'PENDIENTE' 
+                            ? `<button class="btn" onclick="registrarResultado(${s.id})">Capturar Resultado</button>` 
+                            : '<span style="opacity: 0.7;">Completado</span>'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+        cargarSolicitudes();
+
+        async function registrarResultado(id) {
+            const resultado = prompt("Ingrese los resultados del estudio clínico:");
+            if(resultado) {
+                await fetch('/api/lab/resultados', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ solicitud_id: id, resultado })
+                });
+                cargarSolicitudes();
+            }
+        }
+    </script>
+</body>
+</html>

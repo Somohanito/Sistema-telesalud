@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atención Médica - Telesalud</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Layout Específico para el Panel Médico */
+        .medico-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .medico-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Banner de Paciente Activo */
+        .patient-bar {
+            background: rgba(5, 31, 32, 0.85);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .patient-info-chips {
+            display: flex;
+            gap: 15px;
+            font-size: 0.88rem;
+            color: var(--color-light-sage);
+        }
+
+        .patient-info-chips span {
+            background: rgba(218, 241, 222, 0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--glass-border);
+        }
+
+        /* Sistema de Pestañas para Formulario */
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--color-lightest);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.88rem;
+            opacity: 0.7;
+            transition: all 0.25s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--color-medium);
+            opacity: 1;
+            color: var(--color-lightest);
+            border: 1px solid var(--color-light-sage);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Timeline de Historial Clínico */
+        .timeline-item {
+            background: rgba(5, 31, 32, 0.4);
+            border-left: 3px solid var(--color-light-sage);
+            padding: 12px 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 12px;
+        }
+
+        .timeline-date {
+            font-size: 0.78rem;
+            color: var(--color-light-sage);
+            margin-bottom: 5px;
+        }
+
+        .lab-result-card {
+            background: rgba(35, 83, 71, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <h2>Módulo de Atención Médica</h2>
+        <button class="btn btn-danger" onclick="logout()">Cerrar Sesión</button>
+    </div>
+
+    <div class="container">
+        
+        <!-- 1. Barra de Selección y Ficha Rápida de Paciente -->
+        <div class="patient-bar">
+            <div style="flex: 1; min-width: 250px;">
+                <label style="font-size: 0.8rem; color: var(--color-light-sage); display: block; margin-bottom: 4px;">PACIENTE EN CONSULTA:</label>
+                <select id="selectPacientes" onchange="cargarFichaPaciente()" style="width: 100%; padding: 8px; border-radius: 6px;"></select>
+            </div>
+            <div class="patient-info-chips" id="fichaPacienteData">
+                <span>NSS: -</span>
+                <span>Edad: -</span>
+                <span>Sexo: -</span>
+            </div>
+        </div>
+
+        <!-- 2. Dashboard Médico (2 Columnas) -->
+        <div class="medico-layout">
+
+            <!-- COLUMNA IZQUIERDA: ACCIONES Y REGISTRO -->
+            <div>
+                <div class="card">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" onclick="switchTab('tab-consulta')">Nueva Consulta</button>
+                        <button class="tab-btn" onclick="switchTab('tab-lab')">Solicitar Lab</button>
+                        <button class="tab-btn" onclick="switchTab('tab-nuevo-paciente')">+ Nuevo Paciente</button>
+                    </div>
+
+                    <!-- Pestaña A: Consulta / Expediente -->
+                    <div id="tab-consulta" class="tab-content active">
+                        <h3>Registrar Consulta Médica</h3>
+                        <form id="expedienteForm">
+                            <div class="form-group">
+                                <label>Motivo de Consulta:</label>
+                                <textarea id="motivo_consulta" rows="2" placeholder="Síntomas o razón de la visita..." required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Diagnóstico Médico:</label>
+                                <textarea id="diagnostico" rows="2" placeholder="Evaluación médica..." required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Tratamiento Prescrito:</label>
+                                <textarea id="tratamiento" rows="2" placeholder="Indicaciones y medicamentos..." required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Notas Clínicas Adicionales:</label>
+                                <textarea id="notas" rows="2" placeholder="Observaciones..."></textarea>
+                            </div>
+                            <button type="submit" class="btn" style="width: 100%;">Guardar Registro Clínico</button>
+                        </form>
+                    </div>
+
+                    <!-- Pestaña B: Solicitud de Laboratorio -->
+                    <div id="tab-lab" class="tab-content">
+                        <h3>Orden de Laboratorio</h3>
+                        <form id="solicitudLabForm">
+                            <div class="form-group">
+                                <label>Seleccionar Estudio Requerido:</label>
+                                <select id="tipo_estudio">
+                                    <option value="Biometría hemática">Biometría hemática</option>
+                                    <option value="Glucosa">Glucosa</option>
+                                    <option value="Perfil lipídico">Perfil lipídico</option>
+                                    <option value="Uroanálisis">Uroanálisis</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn" style="width: 100%;">Enviar Orden a Laboratorio</button>
+                        </form>
+                    </div>
+
+                    <!-- Pestaña C: Alta de Nuevo Paciente -->
+                    <div id="tab-nuevo-paciente" class="tab-content">
+                        <h3>Registrar Nuevo Paciente</h3>
+                        <form id="pacienteForm">
+                            <div class="form-group"><label>NSS:</label><input type="text" id="nss" required></div>
+                            <div class="form-group"><label>Nombre Completo:</label><input type="text" id="nombre" required></div>
+                            <div class="form-group"><label>Edad:</label><input type="number" id="edad" required></div>
+                            <div class="form-group">
+                                <label>Sexo:</label>
+                                <select id="sexo">
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Femenino">Femenino</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Dirección:</label><input type="text" id="direccion"></div>
+                            <div class="form-group"><label>Teléfono:</label><input type="text" id="telefono"></div>
+                            <div class="form-group"><label>Estado Civil:</label><input type="text" id="estado_civil"></div>
+                            <button type="submit" class="btn" style="width: 100%;">Registrar Paciente</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Intercambio de Archivos TXT -->
+                <div class="card">
+                    <h3>Intercambio de Información (.TXT)</h3>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <button class="btn" onclick="exportarTXT()" style="flex:1;">Exportar (.TXT)</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Importar Expediente (.TXT):</label>
+                        <input type="file" id="archivoTxt" accept=".txt">
+                    </div>
+                    <button class="btn" onclick="importarTXT()" style="width: 100%;">Leer y Visualizar TXT</button>
+                    <pre id="contenidoTxt" style="margin-top: 15px; display: none;"></pre>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: HISTORIAL Y ESTUDIOS (CONSULTA RÁPIDA) -->
+            <div>
+                <!-- Historial Médico -->
+                <div class="card">
+                    <h3>Historial Clínico del Paciente</h3>
+                    <div id="historialMedico" style="max-height: 380px; overflow-y: auto; padding-right: 5px;">
+                        <p><em>Seleccione un paciente para cargar su historial.</em></p>
+                    </div>
+                </div>
+
+                <!-- Resultados de Laboratorio -->
+                <div class="card">
+                    <h3>Resultados de Laboratorio Recibidos</h3>
+                    <div id="resultadosLab" style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                        <p><em>Seleccione un paciente para ver estudios.</em></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        let pacientesCache = [];
+
+        // Cambio de Pestañas
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Cargar Lista de Pacientes
+        async function cargarPacientes() {
+            const res = await fetch('/api/medico/pacientes');
+            pacientesCache = await res.json();
+            const sel = document.getElementById('selectPacientes');
+            
+            if (pacientesCache.length === 0) {
+                sel.innerHTML = '<option value="">Sin pacientes registrados</option>';
+            } else {
+                sel.innerHTML = pacientesCache.map(p => `<option value="${p.id}">${p.nombre} (NSS: ${p.nss})</option>`).join('');
+                cargarFichaPaciente();
+            }
+        }
+
+        // Cargar Datos y Expediente del Paciente Seleccionado
+        async function cargarFichaPaciente() {
+            const id = document.getElementById('selectPacientes').value;
+            if(!id) return;
+
+            // Ficha en Header
+            const p = pacientesCache.find(x => x.id == id);
+            if(p) {
+                document.getElementById('fichaPacienteData').innerHTML = `
+                    <span>NSS: <strong>${p.nss}</strong></span>
+                    <span>Edad: <strong>${p.edad} años</strong></span>
+                    <span>Sexo: <strong>${p.sexo}</strong></span>
+                    <span>Tel: <strong>${p.telefono || 'N/A'}</strong></span>
+                `;
+            }
+
+            // Historial de Consultas
+            const resExp = await fetch(`/api/medico/expedientes/${id}`);
+            const exps = await resExp.json();
+            const contExp = document.getElementById('historialMedico');
+            
+            if(exps.length === 0) {
+                contExp.innerHTML = '<p><em>Sin antecedentes registrados para este paciente.</em></p>';
+            } else {
+                contExp.innerHTML = exps.map(e => `
+                    <div class="timeline-item">
+                        <div class="timeline-date">${e.fecha_ingreso} — Dr(a). ${e.medico}</div>
+                        <p><strong>Motivo:</strong> ${e.motivo_consulta}</p>
+                        <p><strong>Diagnóstico:</strong> ${e.diagnostico}</p>
+                        <p><strong>Tratamiento:</strong> ${e.tratamiento}</p>
+                        ${e.notas ? `<p><strong>Notas:</strong> ${e.notas}</p>` : ''}
+                    </div>
+                `).join('');
+            }
+
+            // Resultados de Laboratorio
+            const resLab = await fetch(`/api/medico/resultados-lab/${id}`);
+            const labs = await resLab.json();
+            const contLab = document.getElementById('resultadosLab');
+
+            if(labs.length === 0) {
+                contLab.innerHTML = '<p><em>Sin análisis de laboratorio reportados.</em></p>';
+            } else {
+                contLab.innerHTML = labs.map(l => `
+                    <div class="lab-result-card">
+                        <div class="timeline-date">${l.fecha_resultado} — Laboratorista: ${l.laboratorista}</div>
+                        <p><strong>Estudio:</strong> ${l.tipo_estudio}</p>
+                        <p><strong>Resultado:</strong> <span style="color:var(--color-light-sage);">${l.resultado}</span></p>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Guardar Paciente
+        document.getElementById('pacienteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const body = {
+                nss: document.getElementById('nss').value,
+                nombre: document.getElementById('nombre').value,
+                edad: document.getElementById('edad').value,
+                sexo: document.getElementById('sexo').value,
+                direccion: document.getElementById('direccion').value,
+                telefono: document.getElementById('telefono').value,
+                estado_civil: document.getElementById('estado_civil').value
+            };
+            const res = await fetch('/api/medico/pacientes', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(body)
+            });
+            if (res.ok) {
+                alert('Paciente dado de alta exitosamente');
+                document.getElementById('pacienteForm').reset();
+                await cargarPacientes();
+                switchTab('tab-consulta');
+            }
+        });
+
+        // Guardar Registro de Consulta
+        document.getElementById('expedienteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const paciente_id = document.getElementById('selectPacientes').value;
+            if(!paciente_id) return alert('Seleccione un paciente');
+
+            const body = {
+                paciente_id,
+                motivo_consulta: document.getElementById('motivo_consulta').value,
+                diagnostico: document.getElementById('diagnostico').value,
+                tratamiento: document.getElementById('tratamiento').value,
+                notas: document.getElementById('notas').value
+            };
+            await fetch('/api/medico/expedientes', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(body)
+            });
+            alert('Registro agregado al expediente');
+            document.getElementById('expedienteForm').reset();
+            cargarFichaPaciente();
+        });
+
+        // Solicitar Laboratorio
+        document.getElementById('solicitudLabForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const paciente_id = document.getElementById('selectPacientes').value;
+            if(!paciente_id) return alert('Seleccione un paciente');
+
+            const body = {
+                paciente_id,
+                tipo_estudio: document.getElementById('tipo_estudio').value
+            };
+            await fetch('/api/medico/solicitar-estudio', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(body)
+            });
+            alert('Orden enviada al departamento de laboratorio');
+        });
+
+        // Exportar / Importar TXT
+        function exportarTXT() {
+            const pId = document.getElementById('selectPacientes').value;
+            if (pId) window.location.href = `/api/medico/exportar-txt/${pId}`;
+        }
+
+        async function importarTXT() {
+            const fileInput = document.getElementById('archivoTxt');
+            if (!fileInput.files[0]) return alert('Seleccione un archivo .txt');
+            const formData = new FormData();
+            formData.append('archivo', fileInput.files[0]);
+            
+            const res = await fetch('/api/medico/importar-txt', { method: 'POST', body: formData });
+            const data = await res.json();
+            const container = document.getElementById('contenidoTxt');
+            container.innerText = data.contenidoParseado;
+            container.style.display = 'block';
+        }
+
+        cargarPacientes();
+    </script>
+</body>
+</html>

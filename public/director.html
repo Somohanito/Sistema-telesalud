@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dirección General - Telesalud</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="navbar">
+        <h2>Panel de Dirección General</h2>
+        <button class="btn btn-danger" onclick="logout()">Cerrar Sesión</button>
+    </div>
+
+    <div class="container">
+        <!-- Indicadores -->
+        <div class="card">
+            <h3>Estadísticas Generales Hospitalarias</h3>
+            <p style="font-size: 1.05rem; margin-bottom: 8px;">
+                <strong>Total de Pacientes Registrados:</strong> 
+                <span id="totPacientes" style="color:var(--color-light-sage); font-weight:bold;">0</span>
+            </p>
+            <p style="font-size: 1.05rem;">
+                <strong>Total de Estudios Solicitados:</strong> 
+                <span id="totEstudios" style="color:var(--color-light-sage); font-weight:bold;">0</span>
+            </p>
+        </div>
+        
+        <!-- Métricas de Laboratorio -->
+        <div class="card">
+            <h3>Estudios Realizados por Tipo</h3>
+            <table>
+                <thead>
+                    <tr><th>Tipo de Estudio</th><th>Cantidad Realizada</th></tr>
+                </thead>
+                <tbody id="estudiosTable"></tbody>
+            </table>
+        </div>
+
+        <!-- Consulta en modo lectura -->
+        <div class="card">
+            <h3>Consulta de Expedientes Clínicos (Modo Lectura)</h3>
+            <div class="form-group">
+                <label>Seleccionar Paciente:</label>
+                <select id="selectPacientes" onchange="cargarExpedientes()"></select>
+            </div>
+            <div id="historialClinico"></div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        async function cargarEstadisticas() {
+            const res = await fetch('/api/director/estadisticas');
+            const data = await res.json();
+            document.getElementById('totPacientes').innerText = data.totalPacientes;
+            document.getElementById('totEstudios').innerText = data.totalEstudios;
+            
+            const body = document.getElementById('estudiosTable');
+            body.innerHTML = data.estudiosPorTipo.map(e => `
+                <tr>
+                    <td>${e.tipo_estudio}</td>
+                    <td><strong>${e.cantidad}</strong></td>
+                </tr>
+            `).join('');
+        }
+
+        async function cargarPacientes() {
+            const res = await fetch('/api/medico/pacientes');
+            const data = await res.json();
+            const sel = document.getElementById('selectPacientes');
+            sel.innerHTML = '<option value="">-- Seleccione un Paciente --</option>' + 
+                data.map(p => `<option value="${p.id}">${p.nombre} (NSS: ${p.nss})</option>`).join('');
+        }
+
+        async function cargarExpedientes() {
+            const id = document.getElementById('selectPacientes').value;
+            if(!id) return;
+            const res = await fetch(`/api/medico/expedientes/${id}`);
+            const data = await res.json();
+            const cont = document.getElementById('historialClinico');
+            if(data.length === 0) {
+                cont.innerHTML = '<p><em>No hay consultas registradas para este paciente.</em></p>';
+                return;
+            }
+            cont.innerHTML = data.map(e => `
+                <div style="background: rgba(5,31,32,0.5); padding: 12px; border-radius: 8px; margin-top: 10px; border-left: 3px solid var(--color-light-sage);">
+                    <p><strong>Fecha:</strong> ${e.fecha_ingreso} | <strong>Médico:</strong> ${e.medico}</p>
+                    <p><strong>Motivo:</strong> ${e.motivo_consulta}</p>
+                    <p><strong>Diagnóstico:</strong> ${e.diagnostico}</p>
+                    <p><strong>Tratamiento:</strong> ${e.tratamiento}</p>
+                    <p><strong>Notas:</strong> ${e.notas}</p>
+                </div>
+            `).join('');
+        }
+
+        cargarEstadisticas();
+        cargarPacientes();
+    </script>
+</body>
+</html>
