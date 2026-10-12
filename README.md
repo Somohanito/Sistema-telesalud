@@ -77,3 +77,6 @@ Sistema web desarrollado para la administración de expedientes clínicos, contr
    ```bash
    git clone [https://github.com/Somohanito/Sistema-telesalud.git](https://github.com/Somohanito/Sistema-telesalud.git)
    cd Sistema-telesalud
+---
+   ## Author & Developer / Autor y Desarrollador
+* **Ing. Axel Daniel Somohano Maldonado** — *Mechatronics, Embedded Systems, Hardware & Software Architecture*
