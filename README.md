@@ -79,4 +79,4 @@ Sistema web desarrollado para la administración de expedientes clínicos, contr
    cd Sistema-telesalud
 ---
    ## Author & Developer / Autor y Desarrollador
-* **Ing. Axel Daniel Somohano Maldonado** —
+* **Ing. Axel Daniel Somohano Maldonado**
